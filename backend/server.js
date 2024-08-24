@@ -71,6 +71,11 @@ const touristPlaceImages = [
   "https://images.unsplash.com/photo-1676983463766-db0e54be9da3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwxMHx8dG91cmlzdCUyMHBsYWNlc3xlbnwwfHx8fDE3MjQ0OTc0MTl8MA&ixlib=rb-4.0.3&q=80&w=1080",
 ];
 
+app.get('/', (req, res) => {
+  res.send('Server is live');
+});
+
+
 app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
   const { place, budget, days, people, currency } = req.body;
 

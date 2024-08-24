@@ -16,7 +16,7 @@ const useGenerateTrip = () => {
       const idToken = await auth.currentUser.getIdToken();
 
       const response = await axios.post(
-        "http://localhost:5001/api/generate-trip",
+        "https://travel-app-api-plum.vercel.app/api/generate-trip",
         {
           place,
           budget,

@@ -14,7 +14,7 @@ const useFetchTripDetails = (tripId) => {
       if (user && tripId) {
         try {
           const idToken = await user.getIdToken();
-          const response = await axios.get(`http://localhost:5001/api/user-trips/${tripId}`, {
+          const response = await axios.get(`https://travel-app-api-plum.vercel.app/api/user-trips/${tripId}`, {
             headers: {
               Authorization: `Bearer ${idToken}`,
             },

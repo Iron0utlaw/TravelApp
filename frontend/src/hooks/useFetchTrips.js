@@ -8,13 +8,14 @@ const useFetchTrips = () => {
   const [error, setError] = useState(null);
 
   const { user } = useAuth();
+  console.log(process.env.REACT_APP_API_URL);
 
   useEffect(() => {
     const fetchTrips = async () => {
       if (user) {
         try {
           const idToken = await user.getIdToken();
-          const response = await axios.get("https://travelapp-igwl.onrender.com/api/user-trips", {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-trips`, {
             headers: {
               Authorization: `Bearer ${idToken}`,
             },

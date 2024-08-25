@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -8,34 +8,43 @@ import {
   Text,
   VStack,
   Flex,
-  useToast,
   Divider,
+  InputGroup,
+  InputLeftAddon,
 } from "@chakra-ui/react";
-import useGenerateTrip from "../hooks/useGenerateTrip";
+import useTripForm from "../hooks/useTripForm";
 import Hotel from "../components/Hotel";
 import ItineraryDay from "../components/ItineraryDay";
+import LoadingScreen from "../components/Loader";
+import LocationSearch from "../components/LocationSearch";
 
 const CreateTrip = () => {
-  const [place, setPlace] = useState("");
-  const [budget, setBudget] = useState("");
-  const [days, setDays] = useState("");
-  const [people, setPeople] = useState("");
-  const currency = "INR";
+  const {
+    place,
+    budget,
+    days,
+    people,
+    suggestions,
+    loadingSuggestions,
+    loading,
+    error,
+    trip,
+    setPlace,
+    setBudget,
+    setDays,
+    setPeople,
+    fetchLocationSuggestions,
+    handleSubmit,
+  } = useTripForm();
 
-  const toast = useToast();
-  const { trip, loading, error, generateTrip } = useGenerateTrip();
+  // Helper function to format the budget with commas
+  const formatBudget = (value) => {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
-  const handleClick = () => {
-    if (!place || !budget || !days || !people) {
-      toast({
-        title: "All fields are required.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    generateTrip({ place, budget, days, people, currency });
+  const handleBudgetChange = (e) => {
+    const formattedValue = e.target.value.replace(/,/g, "");
+    setBudget(formattedValue);
   };
 
   return (
@@ -46,29 +55,38 @@ const CreateTrip = () => {
 
       <VStack spacing={4} align="stretch">
         <SimpleGrid columns={{ sm: 1, md: 2, lg: 4 }} spacing={4}>
-          <Input
-            value={place}
-            onChange={(e) => setPlace(e.target.value)}
-            placeholder="Enter location"
-            size="lg"
+          <LocationSearch
+            place={place}
+            setPlace={setPlace}
+            fetchLocationSuggestions={fetchLocationSuggestions}
+            suggestions={suggestions}
+            loadingSuggestions={loadingSuggestions}
           />
-          <Input
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            placeholder="Enter budget"
-            size="lg"
-          />
+          
+          <InputGroup>
+            <InputLeftAddon h="auto" children="₹" />
+            <Input
+              value={formatBudget(budget)}
+              onChange={handleBudgetChange}
+              placeholder="Enter budget"
+              size="lg"
+              type="text"
+            />
+          </InputGroup>
+
           <Input
             value={days}
             onChange={(e) => setDays(e.target.value)}
             placeholder="Enter number of days"
             size="lg"
+            type="number"
           />
           <Input
             value={people}
             onChange={(e) => setPeople(e.target.value)}
             placeholder="Enter number of people"
             size="lg"
+            type="number"
           />
         </SimpleGrid>
 
@@ -77,8 +95,8 @@ const CreateTrip = () => {
             size="lg"
             rounded="full"
             colorScheme="teal"
-            onClick={handleClick}
-            isLoading={loading}
+            onClick={handleSubmit}
+            isDisabled={loading}
             mt={4}
           >
             Create Trip
@@ -91,6 +109,8 @@ const CreateTrip = () => {
           Error: {error}
         </Text>
       )}
+
+      {loading && <LoadingScreen />}
 
       {trip && !loading && (
         <>

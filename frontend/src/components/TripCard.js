@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 
 const TripCard = ({ trip, id }) => {
   const imageUrl = trip.Itinerary[0].Plan[0]["Place Image Url"];
+  const formatBudget = (value) => {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
   
   return (
     <Box
@@ -27,7 +30,7 @@ const TripCard = ({ trip, id }) => {
             Trip to {trip.place}
           </Heading>
           <Text fontSize="sm">
-            <strong>Budget:</strong> {trip.budget} {trip.currency}
+            <strong>Budget:</strong> {formatBudget(trip.budget)} {trip.currency}
           </Text>
           <Text fontSize="sm">
             <strong>Days:</strong> {trip.days}

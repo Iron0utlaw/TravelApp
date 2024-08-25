@@ -14,7 +14,7 @@ const useFetchTripDetails = (tripId) => {
       if (user && tripId) {
         try {
           const idToken = await user.getIdToken();
-          const response = await axios.get(`https://travelapp-igwl.onrender.com/api/user-trips/${tripId}`, {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-trips/${tripId}`, {
             headers: {
               Authorization: `Bearer ${idToken}`,
             },

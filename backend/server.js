@@ -210,6 +210,32 @@ app.get("/api/user-trips/:tripId", verifyFirebaseToken, async (req, res) => {
   }
 });
 
+const CitySchema = new mongoose.Schema({
+  city: String,
+  region: String,
+  country: String,
+});
+
+const City = mongoose.model("City", CitySchema);
+
+// New API endpoint for fetching location suggestions
+app.get("/api/locations", async (req, res) => {
+  const { namePrefix } = req.query;
+  try {
+    const cities = await City.find({
+      $or: [
+        { city: { $regex: new RegExp(namePrefix, "i") } },
+        { region: { $regex: new RegExp(namePrefix, "i") } },
+        { country: { $regex: new RegExp(namePrefix, "i") } },
+      ],
+    }).limit(10);
+
+    res.json(cities);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching cities" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

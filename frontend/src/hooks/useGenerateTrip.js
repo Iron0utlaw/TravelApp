@@ -16,7 +16,7 @@ const useGenerateTrip = () => {
       const idToken = await auth.currentUser.getIdToken();
 
       const response = await axios.post(
-        "https://travelapp-igwl.onrender.com/api/generate-trip",
+        `${process.env.REACT_APP_API_URL}/api/generate-trip`,
         {
           place,
           budget,

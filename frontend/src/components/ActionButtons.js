@@ -1,5 +1,5 @@
 import React from "react";
-import { ButtonGroup, Button } from "@chakra-ui/react";
+import { Wrap, WrapItem, Button } from "@chakra-ui/react";
 import { generateMarkdown } from "../CommonUtils";
 import AIButton from "./AIButton";
 
@@ -9,31 +9,39 @@ const ActionButtons = ({
   generateQuestions,
   handleFlightSearch,
 }) => (
-  <ButtonGroup>
-    <AIButton
-      isLoading={generatingQuestions}
-      loadingText="Preparing questions..."
-      onClick={generateQuestions}
-    >
-      Create AI Recommend Trip Plan
-    </AIButton>
-    <Button
-      size="md"
-      rounded="full"
-      colorScheme="teal"
-      onClick={handleFlightSearch}
-    >
-      Book Flights
-    </Button>
-    <Button
-      size="md"
-      rounded="full"
-      colorScheme="teal"
-      onClick={() => generateMarkdown(trip)}
-    >
-      Generate Markdown
-    </Button>
-  </ButtonGroup>
+  <Wrap spacing={4} justify="center">
+    <WrapItem>
+      <AIButton
+        isLoading={generatingQuestions}
+        loadingText="Preparing questions..."
+        onClick={generateQuestions}
+        size="md"
+        rounded="full"
+      >
+        Create AI Recommend Trip Plan
+      </AIButton>
+    </WrapItem>
+    <WrapItem>
+      <Button
+        size="md"
+        rounded="full"
+        colorScheme="teal"
+        onClick={handleFlightSearch}
+      >
+        Book Flights
+      </Button>
+    </WrapItem>
+    <WrapItem>
+      <Button
+        size="md"
+        rounded="full"
+        colorScheme="teal"
+        onClick={() => generateMarkdown(trip)}
+      >
+        Generate Markdown
+      </Button>
+    </WrapItem>
+  </Wrap>
 );
 
 export default ActionButtons;

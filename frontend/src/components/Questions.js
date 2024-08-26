@@ -1,26 +1,70 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
-import { Box, Heading, HStack, Icon, VStack, Text, UnorderedList, ListItem, Checkbox, Button } from "@chakra-ui/react";
+import { CheckCircleIcon, CopyIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Heading,
+  HStack,
+  Icon,
+  VStack,
+  Text,
+  UnorderedList,
+  ListItem,
+  Checkbox,
+  Button,
+  Spinner,
+  Alert,
+  AlertIcon,
+  IconButton,
+  useToast,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
+import useGenerateAITrip from "../hooks/useGenerateAITrip"; // Import the custom hook
+import ReactMarkdown from "react-markdown";
 
-const Questions = ({ questions }) => {
-  const [selectedOptions, setSelectedOptions] = useState(Array(questions.length).fill(null));
+const Questions = ({ trip, questions }) => {
+  const [selectedOptions, setSelectedOptions] = useState(
+    Array(questions.length).fill(null)
+  );
+
+  // Use the custom hook
+  const { tripPlan, loading, error, generateAITrip } = useGenerateAITrip(
+    trip,
+    selectedOptions
+  );
 
   const handleCheckboxChange = (questionIndex, optionValue) => {
-    const updatedSelections = selectedOptions.map((selected, index) => 
+    const updatedSelections = selectedOptions.map((selected, index) =>
       index === questionIndex ? optionValue : selected
     );
     setSelectedOptions(updatedSelections);
   };
 
-  const handleSubmit = () => {
-    // Create a JSON object with questions and selected answers
-    const result = questions.map((q, index) => ({
-      question: q.question,
-      selectedAnswer: selectedOptions[index]
-    }));
+  const handleSubmit = async () => {
+    // Trigger the API call using the hook
+    await generateAITrip();
+  };
 
-    // Output the JSON object
-    console.log(JSON.stringify(result, null, 2));
+  const toast = useToast();
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(tripPlan).then(
+      () => {
+        toast({
+          title: "Copied to clipboard!",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+      },
+      (err) => {
+        toast({
+          title: "Failed to copy!",
+          description: "An error occurred while copying to clipboard.",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    );
   };
 
   return (
@@ -59,13 +103,48 @@ const Questions = ({ questions }) => {
             </UnorderedList>
           </Box>
         ))}
-        <Button
-          colorScheme="teal"
-          onClick={handleSubmit}
-          alignSelf="flex-end"
-        >
-          Submit
-        </Button>
+        {loading ? (
+          <Spinner size="lg" color="teal.500" />
+        ) : (
+          <Button
+            colorScheme="teal"
+            onClick={handleSubmit}
+            alignSelf="flex-end"
+          >
+            Submit
+          </Button>
+        )}
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
+        {tripPlan && (
+          <Box
+            p={16}
+            borderWidth={1}
+            borderRadius="lg"
+            boxShadow="md"
+            w="full"
+            bg="gray.100"
+          >
+            <HStack align="start" justifyContent={"space-between"} mb={4}>
+              <Heading as="h4" size="md" mb={4}>
+                Generated Trip Plan
+              </Heading>
+              <IconButton
+                bgColor={"teal.500"}
+                color={"white"}
+                size="sm"
+                icon={<Icon as={CopyIcon} boxSize={4} />}
+                aria-label="Copy to clipboard"
+                onClick={handleCopy}
+              />
+            </HStack>
+            <ReactMarkdown>{tripPlan.markdown}</ReactMarkdown>
+          </Box>
+        )}
       </VStack>
     </Box>
   );

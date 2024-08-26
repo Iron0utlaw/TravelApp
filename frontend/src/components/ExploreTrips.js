@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, Text, VStack, Image, Spinner, Flex, Button } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Image, Spinner, Flex } from "@chakra-ui/react";
 import Slider from "react-slick";
 import axios from "axios";
 
@@ -22,8 +22,6 @@ const ExploreTrips = () => {
 
     fetchTrips();
   }, []);
-
-  console.log(trips);
 
 
   if (loading) {
@@ -86,7 +84,7 @@ const ExploreTrips = () => {
           <Box key={index} px={4} py={4}>
             <Box p={6} borderRadius="md" shadow="md" bg="gray.100">
               <VStack spacing={4} align="stretch">
-                <Heading as="h3" size="md" color="teal.500">
+                <Heading as="h3" size={{ base: "sm", md: "md" }} color="teal.500">
                   {trip.tripData.place}
                 </Heading>
                 <Image

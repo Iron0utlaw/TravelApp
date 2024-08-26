@@ -94,8 +94,8 @@ const LandingPage = () => {
           {...blobStyles}
           top="0"
           right="0"
-          width="500px"
-          height="500px"
+          width={{ base: "100px", md: "500px" }}
+          height={{ base: "100px", md: "500px" }}
           bgGradient="radial(at 50% 50%, teal.600 0%, teal.400 100%)"
           borderRadius="50%"
         />
@@ -131,7 +131,7 @@ const LandingPage = () => {
             transition={{ duration: 2, ease: "easeInOut" }}
           >
             <Text
-              fontSize="2xl"
+              fontSize={{ base: "xl", md: "2xl" }}
               maxW="lg"
               bgGradient="linear(to-r, teal.500, teal.400, teal.300)"
               bgClip="text"
@@ -150,7 +150,7 @@ const LandingPage = () => {
           >
             <ButtonGroup spacing={4}>
               <Button
-                size="lg"
+                size={{ base: "md", md: "lg" }}
                 rounded="full"
                 onClick={handleStartYourJourney}
                 bgGradient="linear(to-r, teal.500, teal.400)"
@@ -166,7 +166,7 @@ const LandingPage = () => {
                 offset={-70}
               >
                 <Button
-                  size="lg"
+                  size={{ base: "md", md: "lg" }}
                   rounded="full"
                   colorScheme="teal"
                   variant="outline"

@@ -11,6 +11,9 @@ import {
   Divider,
   InputGroup,
   InputLeftAddon,
+  Card,
+  CardHeader,
+  CardBody,
 } from "@chakra-ui/react";
 import useTripForm from "../hooks/useTripForm";
 import Hotel from "../components/Hotel";
@@ -37,10 +40,7 @@ const CreateTrip = () => {
     handleSubmit,
   } = useTripForm();
 
-  // Helper function to format the budget with commas
-  const formatBudget = (value) => {
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  const formatBudget = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   const handleBudgetChange = (e) => {
     const formattedValue = e.target.value.replace(/,/g, "");
@@ -48,72 +48,76 @@ const CreateTrip = () => {
   };
 
   return (
-    <Box maxW="7xl" mx="auto" p={4}>
-      <Heading as="h1" size="xl" textAlign="center" mb={8} color="teal.500">
+    <Flex
+      direction="column"
+      justify="center"
+      align="center"
+      minH="100vh"
+      bg="gray.100"
+    >
+      <Heading as="h1" size="lg" textAlign="center" color="teal.500">
         Create Personalized Trip
       </Heading>
 
-      <VStack spacing={4} align="stretch">
-        <SimpleGrid columns={{ sm: 1, md: 2, lg: 4 }} spacing={4}>
-          <LocationSearch
-            place={place}
-            setPlace={setPlace}
-            fetchLocationSuggestions={fetchLocationSuggestions}
-            suggestions={suggestions}
-            loadingSuggestions={loadingSuggestions}
-          />
-          
-          <InputGroup>
-            <InputLeftAddon h="auto" children="₹" />
-            <Input
-              value={formatBudget(budget)}
-              onChange={handleBudgetChange}
-              placeholder="Enter budget"
-              size="lg"
-              type="text"
+      <Card w={{ base: "90%", md: "60%", lg: "40%" }} shadow="lg" p={6}>
+        <CardBody>
+          <VStack spacing={4} align="stretch">
+            <LocationSearch
+              place={place}
+              setPlace={setPlace}
+              fetchLocationSuggestions={fetchLocationSuggestions}
+              suggestions={suggestions}
+              loadingSuggestions={loadingSuggestions}
             />
-          </InputGroup>
 
-          <Input
-            value={days}
-            onChange={(e) => setDays(e.target.value)}
-            placeholder="Enter number of days"
-            size="lg"
-            type="number"
-          />
-          <Input
-            value={people}
-            onChange={(e) => setPeople(e.target.value)}
-            placeholder="Enter number of people"
-            size="lg"
-            type="number"
-          />
-        </SimpleGrid>
+            <InputGroup>
+              <InputLeftAddon h="auto" children="₹" />
+              <Input
+                value={formatBudget(budget)}
+                onChange={handleBudgetChange}
+                placeholder="Enter budget"
+                size="lg"
+                type="text"
+              />
+            </InputGroup>
 
-        <Flex justify="center">
-          <Button
-            size="lg"
-            rounded="full"
-            colorScheme="teal"
-            onClick={handleSubmit}
-            isDisabled={loading}
-            mt={4}
-          >
-            Create Trip
-          </Button>
-        </Flex>
-      </VStack>
+            <Input
+              value={days}
+              onChange={(e) => setDays(e.target.value)}
+              placeholder="Enter number of days"
+              size="lg"
+              type="number"
+            />
+            <Input
+              value={people}
+              onChange={(e) => setPeople(e.target.value)}
+              placeholder="Enter number of people"
+              size="lg"
+              type="number"
+            />
 
-      {error && (
-        <Text color="red.500" mt={4} textAlign="center">
-          Error: {error}
-        </Text>
-      )}
+            <Button
+              size="lg"
+              rounded="full"
+              colorScheme="teal"
+              onClick={handleSubmit}
+              isDisabled={loading}
+            >
+              Create Trip
+            </Button>
+          </VStack>
 
-      {loading && <LoadingScreen />}
+          {error && (
+            <Text color="red.500" mt={4} textAlign="center">
+              Error: {error}
+            </Text>
+          )}
+          {loading && <LoadingScreen />}
+        </CardBody>
+      </Card>
 
       {trip && !loading && (
-        <>
+        <Box maxW="7xl" mx="auto" mt={8} p={4}>
           <Divider my={8} />
           {trip.HotelOptions && trip.HotelOptions.length > 0 && (
             <Box>
@@ -138,9 +142,9 @@ const CreateTrip = () => {
               ))}
             </Box>
           )}
-        </>
+        </Box>
       )}
-    </Box>
+    </Flex>
   );
 };
 

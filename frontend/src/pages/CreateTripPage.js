@@ -14,6 +14,7 @@ import {
   Card,
   CardBody,
   useBreakpointValue,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import useTripForm from "../hooks/useTripForm";
 import Hotel from "../components/Hotel";
@@ -21,12 +22,7 @@ import ItineraryDay from "../components/ItineraryDay";
 import LoadingScreen from "../components/Loader";
 import LocationSearch from "../components/LocationSearch";
 import { motion } from "framer-motion";
-
-const blobStyles = {
-  position: "fixed",
-  zIndex: -1, // Ensure the blob stays behind other content
-  opacity: 0.5,
-};
+import { blobStyles, formatBudget } from "../CommonUtils";
 
 const CreateTrip = () => {
   const {
@@ -46,6 +42,14 @@ const CreateTrip = () => {
     fetchLocationSuggestions,
     handleSubmit,
   } = useTripForm();
+
+  const handleFlightSearch = () => {
+    const query = "flights to " + trip.place;
+    window.open(
+      `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+      "_blank"
+    );
+  };
 
   const blob1x = useBreakpointValue({ base: 100, md: 500 });
   const blob2x = useBreakpointValue({ base: -100, md: -500 });
@@ -108,7 +112,6 @@ const CreateTrip = () => {
     },
   };
 
-  const formatBudget = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   const handleBudgetChange = (e) => {
     const formattedValue = e.target.value.replace(/,/g, "");
@@ -131,9 +134,9 @@ const CreateTrip = () => {
           {...blobStyles}
           top="10%"
           left="10%"
-          width={{base:"150px", md:"200px"}}
-          height={{base:"150px", md:"200px"}}
-          transform={{base: "translateX(50px)", md: "translateX(150px)"}} //150px
+          width={{ base: "150px", md: "200px" }}
+          height={{ base: "150px", md: "200px" }}
+          transform={{ base: "translateX(50px)", md: "translateX(150px)" }} //150px
           bgGradient="radial(at 50% 50%, teal.500 0%, teal.300 100%)"
           borderRadius="50%"
         />
@@ -155,7 +158,7 @@ const CreateTrip = () => {
           right="-10%"
           width={{ base: "200px", md: "400px" }}
           height={{ base: "200px", md: "400px" }}
-          transform={{base: "translateY(350px)", md: "translateX(0px)"}} //-100
+          transform={{ base: "translateY(350px)", md: "translateY(150px)" }} //-100
           bgGradient="radial(at 50% 50%, teal.600 0%, teal.400 100%)"
           borderRadius="50%"
         />
@@ -242,6 +245,25 @@ const CreateTrip = () => {
           animate={{ opacity: 1 }} // Fade in and slide in from the left
           transition={{ duration: 0.8, ease: "easeInOut", delay: 1 }} // Delay syncs with blob animation
         >
+          <ButtonGroup mt={8}>
+            <Button
+              size="md"
+              rounded="full"
+              colorScheme="teal"
+              onClick={handleFlightSearch}
+            >
+              Book Flights
+            </Button>
+            <Button
+              size="md"
+              rounded="full"
+              colorScheme="teal"
+              loadingText="Preparing questions..."
+              // isLoading={true}
+            >
+              Create AI Recommend Trip Plan
+            </Button>
+          </ButtonGroup>
           <Box maxW="7xl" mx="auto" p={4}>
             <Divider my={8} />
             {trip.HotelOptions && trip.HotelOptions.length > 0 && (

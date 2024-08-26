@@ -1,12 +1,10 @@
 import React from "react";
 import { Box, Heading, Text, Button, VStack, Image, Flex } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { formatBudget } from "../CommonUtils";
 
 const TripCard = ({ trip, id }) => {
   const imageUrl = trip.Itinerary[0].Plan[0]["Place Image Url"];
-  const formatBudget = (value) => {
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
 
   
   return (

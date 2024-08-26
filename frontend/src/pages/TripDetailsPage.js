@@ -1,11 +1,20 @@
 import React from "react";
-import { Box, Heading, SimpleGrid, Text, Divider, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  SimpleGrid,
+  Text,
+  Divider,
+  IconButton,
+  ButtonGroup,
+  Button,
+} from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import useFetchTripDetails from "../hooks/useFetchTripDetails";
 import Hotel from "../components/Hotel";
 import ItineraryDay from "../components/ItineraryDay";
 import json2md from "json2md";
-import { CopyIcon, DownloadIcon } from "@chakra-ui/icons";
+import { CopyIcon } from "@chakra-ui/icons";
 
 const TripDetailsPage = () => {
   const { id } = useParams();
@@ -63,24 +72,44 @@ const TripDetailsPage = () => {
     );
   }
 
+  const handleFlightSearch = () => {
+    const query = "flights to " + trip.place;
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+  };
+
   return (
     <Box maxW="7xl" mx="auto" p={4}>
       <Heading as="h2" size="xl" my={8} color="teal.500" textAlign="center">
         Trip Details
       </Heading>
 
-      <Box position="fixed" bottom="20px" right="20px" zIndex="1000">
-        <IconButton
-          aria-label="Generate Markdown"
-          icon={<CopyIcon />}
+      <ButtonGroup>
+        <Button
+          size="md"
+          rounded="full"
+          colorScheme="teal"
+          onClick={handleFlightSearch}
+        >
+          Book Flights
+        </Button>
+        <Button
+          size="md"
+          rounded="full"
+          colorScheme="teal"
+          loadingText='Preparing questions...'
+          // isLoading={true}
+        >
+          Create AI Recommend Trip Plan
+        </Button>
+        <Button
+          size="md"
+          rounded="full"
+          colorScheme="teal"
           onClick={generateMarkdown}
-          variant="outline"
-          color="white"
-          bgColor="teal"
-          size="lg"
-          border="none"
-        />
-      </Box>
+        >
+          Generate Markdown
+        </Button>
+      </ButtonGroup>
 
       {trip && (
         <>

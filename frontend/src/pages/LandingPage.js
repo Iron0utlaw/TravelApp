@@ -14,12 +14,7 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { motion } from "framer-motion";
 import { Link as ScrollLink, Element } from "react-scroll";
 import ExploreTrips from "../components/ExploreTrips";
-
-const blobStyles = {
-  position: "absolute",
-  zIndex: -1, // Ensure the blob stays behind other content
-  opacity: 0.5,
-};
+import { blobStyles } from "../CommonUtils";
 
 const floatingAnimation = {
   initial: {

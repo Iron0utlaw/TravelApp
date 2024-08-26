@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Heading, Text, VStack, Image, Spinner, Flex } from "@chakra-ui/react";
 import Slider from "react-slick";
 import axios from "axios";
+import { formatBudget } from "../CommonUtils";
 
 const ExploreTrips = () => {
   const [trips, setTrips] = useState([]);
@@ -67,10 +68,6 @@ const ExploreTrips = () => {
         },
       },
     ],
-  };
-
-  const formatBudget = (value) => {
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (

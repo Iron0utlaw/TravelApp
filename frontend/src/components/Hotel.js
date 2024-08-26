@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Card,
   CardBody,
@@ -10,9 +10,16 @@ import {
   CardFooter,
   ButtonGroup,
   Button,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
 const Hotel = ({ hotel }) => {
+  const handleHotelSearch = () => {
+    const query = "hotels in " + hotel.HotelName;
+    window.open(
+      `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+      "_blank"
+    );
+  };
   return (
     <Card maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
       <CardBody>
@@ -22,7 +29,7 @@ const Hotel = ({ hotel }) => {
           borderRadius="lg"
           height={200}
           width="100%"
-          objectFit="cover" 
+          objectFit="cover"
         />
         <Stack mt="6" spacing="3">
           <Heading size="md">{hotel.HotelName}</Heading>
@@ -39,11 +46,8 @@ const Hotel = ({ hotel }) => {
       <Divider />
       <CardFooter>
         <ButtonGroup spacing="2">
-          <Button variant="solid" colorScheme="blue">
+          <Button onClick={handleHotelSearch} variant="solid" colorScheme="blue">
             Book Now
-          </Button>
-          <Button variant="ghost" colorScheme="blue">
-            Add to Wishlist
           </Button>
         </ButtonGroup>
       </CardFooter>

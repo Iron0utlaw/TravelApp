@@ -71,9 +71,14 @@ const ExploreTrips = () => {
     ],
   };
 
+  const formatBudget = (value) => {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
+    
     <Box p={8}>
-      <Heading as="h2" size="xl" mb={8} textAlign="center" color="teal.500">
+      <Heading as="h2" size="xl" mb={8} textAlign="center" color="teal.600">
         Explore Trips
       </Heading>
       <Slider {...settings}>
@@ -97,7 +102,7 @@ const ExploreTrips = () => {
                   people
                 </Text>
                 <Text fontSize="lg" fontWeight="bold" color="teal.600">
-                  Budget: {trip.tripData.currency} {trip.tripData.budget}
+                  Budget: {trip.tripData.currency} {formatBudget(trip.tripData.budget)}
                 </Text>
               </VStack>
             </Box>

@@ -17,16 +17,26 @@ import ExploreTrips from "../components/ExploreTrips";
 
 const blobStyles = {
   position: "absolute",
-  zIndex: -1,
+  zIndex: -1, // Ensure the blob stays behind other content
   opacity: 0.5,
 };
 
 const floatingAnimation = {
+  initial: {
+    opacity: 0, // Start fully transparent
+  },
   animate: {
-    y: [0, 20, 0], // Moves up and down
+    opacity: 1, // Fade in to full opacity
+    y: [0, 20, 0], // Continuous up and down movement
     transition: {
+      opacity: {
+        duration: 2, // Opacity animation duration
+        ease: "easeInOut", // Smooth transition for opacity
+        once: true, // Ensures opacity animation happens only once
+        delay: 0.5, // Delay the opacity animation
+      },
       y: {
-        repeat: Infinity,
+        repeat: Infinity, // Infinite loop for y-axis movement
         repeatType: "loop",
         duration: 5,
         ease: "easeInOut",
@@ -34,6 +44,8 @@ const floatingAnimation = {
     },
   },
 };
+
+
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -55,7 +67,13 @@ const LandingPage = () => {
   };
 
   return (
-    <Box as="section" textAlign="center" p={4} position="relative">
+    <Box
+      as="section"
+      textAlign="center"
+      p={4}
+      position="relative"
+      overflow="hidden"
+    >
       {/* Blob Shapes */}
       <motion.div {...floatingAnimation}>
         <Box
@@ -68,25 +86,17 @@ const LandingPage = () => {
           borderRadius="50%"
         />
       </motion.div>
-      <motion.div {...floatingAnimation} animate={{ ...floatingAnimation.animate, y: [-10, 10, -10] }}>
+      <motion.div
+        {...floatingAnimation}
+        animate={{ ...floatingAnimation.animate, y: [-10, 10, -10] }}
+      >
         <Box
           {...blobStyles}
-          bottom="10%"
-          right="-15%"
+          top="0"
+          right="0"
           width="500px"
           height="500px"
           bgGradient="radial(at 50% 50%, teal.600 0%, teal.400 100%)"
-          borderRadius="50%"
-        />
-      </motion.div>
-      <motion.div {...floatingAnimation} animate={{ ...floatingAnimation.animate, y: [15, -15, 15] }}>
-        <Box
-          {...blobStyles}
-          top="20%"
-          right="-20%"
-          width="400px"
-          height="400px"
-          bgGradient="radial(at 50% 50%, teal.400 0%, teal.200 50%, teal.300 100%)"
           borderRadius="50%"
         />
       </motion.div>
@@ -98,7 +108,7 @@ const LandingPage = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <VStack spacing={6}>
+        <VStack spacing={6} zIndex={1}>
           <motion.div
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -172,9 +182,22 @@ const LandingPage = () => {
 
       {/* Explore Trips Section */}
       <Element name="explore-trips-section">
-        <Box py={16}>
+        <Box py={2} zIndex={1} position="relative">
           <ExploreTrips />
         </Box>
+        <motion.div {...floatingAnimation}>
+          <Box
+            {...blobStyles}
+            bottom="-750px" // Added 'px' unit to bottom value
+            left="50%" // Center horizontally with left 50% and transform
+            width="2000px" // Cover full width
+            height="1500px" // Adjust the height as needed
+            transform="translateX(-50%)" // Correct syntax for transform
+            bgGradient="radial(at 50% 50%, teal.400 0%, teal.200 50%, teal.300 100%)"
+            borderRadius="50% 50% 0 0" // Creates curvature at the top
+            opacity={0.8}
+          />
+        </motion.div>
       </Element>
     </Box>
   );

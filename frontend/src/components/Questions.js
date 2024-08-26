@@ -46,7 +46,7 @@ const Questions = ({ trip, questions }) => {
   const toast = useToast();
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(tripPlan).then(
+    navigator.clipboard.writeText(tripPlan.markdown).then(
       () => {
         toast({
           title: "Copied to clipboard!",

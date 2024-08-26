@@ -8,7 +8,6 @@ const useGenerateAITrip = (trip, questionsWithAnswers) => {
   const [error, setError] = useState(null);
 
   const { user } = useAuth(); // Access the authenticated user
-  console.log(trip)
 
   const generateAITrip = async () => {
     setLoading(true);

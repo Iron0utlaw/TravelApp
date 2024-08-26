@@ -62,6 +62,21 @@ const useTripForm = () => {
       return;
     }
 
+    // Validate if the place is in suggestions
+    const selectedSuggestion = suggestions.find(
+      (suggestion) => suggestion.name === place
+    );
+
+    if (!selectedSuggestion) {
+      toast({
+        title: "Please select a valid place from the suggestions.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     // Ensure the number of days does not exceed the maximum allowed
     if (parseInt(days) > MAX_DAYS_ALLOWED) {
       toast({
@@ -73,24 +88,17 @@ const useTripForm = () => {
       return;
     }
 
-    // Get the selected place's country from the suggestions
-    const selectedSuggestion = suggestions.find(
-      (suggestion) => suggestion.name === place
-    );
+    const isOutsideIndia = selectedSuggestion.country.toLowerCase() !== "india";
 
-    if (selectedSuggestion) {
-      const isOutsideIndia = selectedSuggestion.country.toLowerCase() !== "india";
-
-      // If location is outside India, check if the budget meets the minimum requirement
-      if (isOutsideIndia && parseInt(budget) < MINIMUM_BUDGET_OUTSIDE_INDIA) {
-        toast({
-          title: `For trips outside India, the budget should be at least ₹${MINIMUM_BUDGET_OUTSIDE_INDIA}.`,
-          status: "warning",
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
-      }
+    // If location is outside India, check if the budget meets the minimum requirement
+    if (isOutsideIndia && parseInt(budget) < MINIMUM_BUDGET_OUTSIDE_INDIA) {
+      toast({
+        title: `For trips outside India, the budget should be at least ₹${MINIMUM_BUDGET_OUTSIDE_INDIA}.`,
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
     }
 
     const cacheKey = `${place}-${budget}-${days}-${people}`;

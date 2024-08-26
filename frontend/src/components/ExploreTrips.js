@@ -9,6 +9,8 @@ const ExploreTrips = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log(trips);
+
   useEffect(() => {
     const fetchTrips = async () => {
       try {

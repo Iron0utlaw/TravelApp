@@ -30,8 +30,7 @@ const useGenerateTrip = () => {
           },
         }
       );
-      console.log(response);
-      setTrip(response.data.tripData);
+      setTrip(response.data.tripData.tripData);
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {

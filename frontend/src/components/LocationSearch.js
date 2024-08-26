@@ -35,7 +35,7 @@ const LocationSearch = ({
         size="lg"
         onFocus={() => setIsFocused(true)}
       />
-      {isFocused && loadingSuggestions && <Text>Loading suggestions...</Text>}
+      {/* {isFocused && loadingSuggestions && <Text>Loading suggestions...</Text>} */}
       {isFocused && suggestions.length > 0 && (
         <List
           mt={2}

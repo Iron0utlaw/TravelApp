@@ -8,7 +8,6 @@ const useFetchTrips = () => {
   const [error, setError] = useState(null);
 
   const { user } = useAuth();
-  console.log(process.env.REACT_APP_API_URL);
 
   useEffect(() => {
     const fetchTrips = async () => {

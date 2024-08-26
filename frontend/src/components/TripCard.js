@@ -7,6 +7,7 @@ const TripCard = ({ trip, id }) => {
   const formatBudget = (value) => {
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
+
   
   return (
     <Box

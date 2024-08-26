@@ -8,7 +8,6 @@ import ItineraryDay from "../components/ItineraryDay";
 const TripDetailsPage = () => {
   const { id } = useParams();
   const { trip, loading, error } = useFetchTripDetails(id);
-  console.log(trip);
 
   if (loading) {
     return (

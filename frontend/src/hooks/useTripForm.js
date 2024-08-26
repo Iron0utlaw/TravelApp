@@ -13,7 +13,7 @@ const useTripForm = () => {
   const currency = "INR";
   
   const MINIMUM_BUDGET_OUTSIDE_INDIA = 100000; // Example value, set accordingly
-  const MAX_DAYS_ALLOWED = 7; // Maximum number of days allowed
+  const MAX_DAYS_ALLOWED = 5; // Maximum number of days allowed
 
   const cache = {}; // Cache object to store results
   const suggestionCache = {}; // Cache for location suggestions

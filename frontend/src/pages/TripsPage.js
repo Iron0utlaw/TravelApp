@@ -6,7 +6,7 @@ import useFetchTrips from "../hooks/useFetchTrips";
 const TripsPage = () => {
   const { trips, loading, error } = useFetchTrips();
   const [showLoading, setShowLoading] = useState(false);
-  console.log(process.env.REACT_APP_API_URL);
+
 
   useEffect(() => {
     const delay = setTimeout(() => {

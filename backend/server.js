@@ -31,15 +31,18 @@ mongoose.connect(MONGO_URI, {
   useUnifiedTopology: true,
 });
 
-// Define Mongoose schema and model
+// User schema
+const userSchema = new mongoose.Schema({
+  userId: { type: String, required: true, unique: true }, // Firebase user ID
+  tripsId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }], // Array of Trip IDs
+});
+
+const User = mongoose.model("User", userSchema);
+
+// Trip schema (updated)
 const tripSchema = new mongoose.Schema({
-  uid: { type: String, required: true }, // Firebase user ID
-  trips: [
-    {
-      tripData: { type: Object, required: true },
-      createdAt: { type: Date, default: Date.now },
-    },
-  ],
+  tripData: { type: Object, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Trip = mongoose.model("Trip", tripSchema);
@@ -148,23 +151,27 @@ app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
       currency,
     };
 
-    // Check if the user already has trips saved
-    const userTrips = await Trip.findOne({ uid: req.user.uid });
+    // Save the trip data into the Trip collection
+    const newTrip = new Trip({
+      tripData: tripData,
+      createdAt: new Date(),
+    });
+    const savedTrip = await newTrip.save();
 
-    if (userTrips) {
-      // User already has trips, so add the new trip
-      userTrips.trips.push({ tripData });
-      await userTrips.save();
-    } else {
-      // No trips found for the user, create a new document
-      const newTrip = new Trip({
-        uid: req.user.uid,
-        trips: [{ tripData }],
+    // Find the user by Firebase UID or create a new one if it doesn't exist
+    let user = await User.findOne({ userId: req.user.uid });
+    if (!user) {
+      user = new User({
+        userId: req.user.uid,
+        tripsId: [savedTrip._id],
       });
-      await newTrip.save();
+    } else {
+      user.tripsId.push(savedTrip._id);
     }
+    await user.save();
 
-    res.status(201).json({ message: "Trip saved successfully", tripData });
+    // Send the response
+    res.status(201).json({ message: "Trip saved successfully", tripData: savedTrip });
   } catch (error) {
     console.error("Error generating trip:", error.message);
     res.status(500).json({ error: "Failed to generate trip plan" });
@@ -173,14 +180,13 @@ app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
 
 app.get("/api/user-trips", verifyFirebaseToken, async (req, res) => {
   try {
-    // Find the user's trips by their UID
-    const userTrips = await Trip.findOne({ uid: req.user.uid });
-
-    if (!userTrips) {
+    const user = await User.findOne({ userId: req.user.uid }).populate("tripsId");
+    
+    if (!user) {
       return res.status(404).json({ error: "No trips found for this user" });
     }
 
-    res.status(200).json({ trips: userTrips.trips });
+    res.status(200).json({ trips: user.tripsId });
   } catch (error) {
     console.error("Error fetching user trips:", error.message);
     res.status(500).json({ error: "Failed to fetch trips" });
@@ -189,15 +195,7 @@ app.get("/api/user-trips", verifyFirebaseToken, async (req, res) => {
 
 app.get("/api/user-trips/:tripId", verifyFirebaseToken, async (req, res) => {
   try {
-    // Find the user's trips by their UID
-    const userTrips = await Trip.findOne({ uid: req.user.uid });
-
-    if (!userTrips) {
-      return res.status(404).json({ error: "No trips found for this user" });
-    }
-
-    // Find the specific trip by ID
-    const trip = userTrips.trips.id(req.params.tripId);
+    const trip = await Trip.findById(req.params.tripId);
 
     if (!trip) {
       return res.status(404).json({ error: "Trip not found" });
@@ -235,6 +233,27 @@ app.get("/api/locations", async (req, res) => {
     res.status(500).json({ error: "Error fetching cities" });
   }
 });
+
+app.get("/api/random-trips", async (req, res) => {
+  try {
+    // Fetch 5 random trips directly from the Trips collection
+    const randomTrips = await Trip.aggregate([
+      { $sample: { size: 5 } } // Randomly sample 5 trips
+    ]);
+
+    if (randomTrips.length === 0) {
+      return res.status(404).json({ error: "No trips found" });
+    }
+
+    // Return the sampled trips
+    res.status(200).json({ trips: randomTrips });
+  } catch (error) {
+    console.error("Error fetching random trips:", error.message);
+    res.status(500).json({ error: "Failed to fetch random trips" });
+  }
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

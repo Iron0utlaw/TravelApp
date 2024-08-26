@@ -1,58 +1,37 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   Heading,
   SimpleGrid,
   Text,
   Divider,
-  IconButton,
-  ButtonGroup,
-  Button,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import useFetchTripDetails from "../hooks/useFetchTripDetails";
+import useGenerateQuestions from "../hooks/useGenerateQuestions";
 import Hotel from "../components/Hotel";
 import ItineraryDay from "../components/ItineraryDay";
-import json2md from "json2md";
-import { CopyIcon } from "@chakra-ui/icons";
+import Questions from "../components/Questions";
+import ActionButtons from "../components/ActionButtons"; // Import ActionButtons
 
 const TripDetailsPage = () => {
   const { id } = useParams();
   const { trip, loading, error } = useFetchTripDetails(id);
+  const {
+    questions,
+    loading: generatingQuestions,
+    error: generationError,
+    generateQuestions,
+  } = useGenerateQuestions(trip);
 
-  const generateMarkdown = () => {
-    if (trip) {
-      const markdownContent = json2md([
-        { h1: `Trip to ${trip.place}` },
-        { p: `Budget: ${trip.currency} ${trip.budget}` },
-        { p: `Days: ${trip.days}` },
-        { p: `People: ${trip.people}` },
-        { h2: "Hotels" },
-        {
-          ul: trip.HotelOptions.map((hotel) => {
-            return `${hotel.HotelName} - ${hotel["Hotel address"]} (Price: ${hotel.Price}, Rating: ${hotel.rating}/5)\n\nDescription: ${hotel.descriptions}`;
-          }),
-        },
-        { h2: "Itinerary" },
-        ...trip.Itinerary.map((day) => ({
-          h3: day.Day,
-          ul: day.Plan.map((place) => {
-            return `${place.PlaceName}\n\nDetails: ${place["Place Details"]}\n\nTicket Pricing: ${place["ticket Pricing"]}\n\nTime to Travel: ${place["Time to travel"]}`;
-          }),
-          p: `Best Time to Visit: ${day["Best Time to Visit"]}`,
-        })),
-      ]);
-
-      // Here you can download the markdown file
-      const blob = new Blob([markdownContent], { type: "text/markdown" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "trip-details.md";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
+  const handleFlightSearch = useMemo(() => {
+    const query = `flights to ${trip?.place || ""}`;
+    return () =>
+      window.open(
+        `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+        "_blank"
+      );
+  }, [trip]);
 
   if (loading) {
     return (
@@ -72,10 +51,7 @@ const TripDetailsPage = () => {
     );
   }
 
-  const handleFlightSearch = () => {
-    const query = "flights to " + trip.place;
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
-  };
+  console.log(trip)
 
   return (
     <Box maxW="7xl" mx="auto" p={4}>
@@ -83,39 +59,25 @@ const TripDetailsPage = () => {
         Trip Details
       </Heading>
 
-      <ButtonGroup>
-        <Button
-          size="md"
-          rounded="full"
-          colorScheme="teal"
-          onClick={handleFlightSearch}
-        >
-          Book Flights
-        </Button>
-        <Button
-          size="md"
-          rounded="full"
-          colorScheme="teal"
-          loadingText='Preparing questions...'
-          // isLoading={true}
-        >
-          Create AI Recommend Trip Plan
-        </Button>
-        <Button
-          size="md"
-          rounded="full"
-          colorScheme="teal"
-          onClick={generateMarkdown}
-        >
-          Generate Markdown
-        </Button>
-      </ButtonGroup>
+      <ActionButtons
+        trip={trip}
+        generatingQuestions={generatingQuestions}
+        generateQuestions={generateQuestions}
+        handleFlightSearch={handleFlightSearch}
+      />
+
+      {generationError && (
+        <Box mt={4} color="red.500">
+          Error generating questions: {generationError}
+        </Box>
+      )}
+
+      {questions && <Questions questions={questions} />}
 
       {trip && (
         <>
           <Divider my={8} />
-
-          {trip.HotelOptions && trip.HotelOptions.length > 0 && (
+          {trip.HotelOptions?.length > 0 && (
             <Box>
               <Heading as="h2" size="lg" my={4}>
                 Hotels
@@ -128,7 +90,7 @@ const TripDetailsPage = () => {
             </Box>
           )}
 
-          {trip.Itinerary && trip.Itinerary.length > 0 && (
+          {trip.Itinerary?.length > 0 && (
             <Box mt={8}>
               <Heading as="h2" size="lg" my={4}>
                 Itinerary

@@ -74,10 +74,9 @@ const touristPlaceImages = [
   "https://images.unsplash.com/photo-1676983463766-db0e54be9da3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwxMHx8dG91cmlzdCUyMHBsYWNlc3xlbnwwfHx8fDE3MjQ0OTc0MTl8MA&ixlib=rb-4.0.3&q=80&w=1080",
 ];
 
-app.get('/', (req, res) => {
-  res.send('Server is live');
+app.get("/", (req, res) => {
+  res.send("Server is live");
 });
-
 
 app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
   const { place, budget, days, people, currency } = req.body;
@@ -171,7 +170,9 @@ app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
     await user.save();
 
     // Send the response
-    res.status(201).json({ message: "Trip saved successfully", tripData: savedTrip });
+    res
+      .status(201)
+      .json({ message: "Trip saved successfully", tripData: savedTrip });
   } catch (error) {
     console.error("Error generating trip:", error.message);
     res.status(500).json({ error: "Failed to generate trip plan" });
@@ -180,8 +181,10 @@ app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
 
 app.get("/api/user-trips", verifyFirebaseToken, async (req, res) => {
   try {
-    const user = await User.findOne({ userId: req.user.uid }).populate("tripsId");
-    
+    const user = await User.findOne({ userId: req.user.uid }).populate(
+      "tripsId"
+    );
+
     if (!user) {
       return res.status(404).json({ error: "No trips found for this user" });
     }
@@ -238,7 +241,7 @@ app.get("/api/random-trips", async (req, res) => {
   try {
     // Fetch 5 random trips directly from the Trips collection
     const randomTrips = await Trip.aggregate([
-      { $sample: { size: 5 } } // Randomly sample 5 trips
+      { $sample: { size: 5 } }, // Randomly sample 5 trips
     ]);
 
     if (randomTrips.length === 0) {
@@ -253,7 +256,56 @@ app.get("/api/random-trips", async (req, res) => {
   }
 });
 
+app.post("/api/generate-questions", verifyFirebaseToken, async (req, res) => {
+  const { trip } = req.body;
+  const tripData = JSON.stringify(trip);
+  const prompt = `Generate 2 mcq personality based questions to understand user preference return in JSON format. No other text. Only Raw text. No backticks ${tripData}`;
 
+  try {
+    const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+    });
+
+    const generationConfig = {
+      temperature: 1,
+      topP: 0.95,
+      topK: 64,
+      maxOutputTokens: 8192,
+      responseMimeType: "text/plain",
+    };
+
+    const chatSession = model.startChat({
+      generationConfig,
+      history: [
+        {
+          role: "user",
+          parts: [
+            {text: "Generate 2 mcq personality based questions to understand user preference return in JSON format. No other text. Only Raw text. No backticks. No Quotation marks\n{\n    \"HotelOptions\": [\n        {\n            \"HotelName\": \"Imperial Hotel\",\n            \"Hotel address\": \"1-1, Uchisaiwaicho 1-chome, Chiyoda-ku, Tokyo 100-8558, Japan\",\n            \"Price\": \"₹30,000+\",\n            \"hotel image url\": \"https://images.unsplash.com/photo-1700063340685-819a487dcc5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwzfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n            \"geo coordinates\": {\n                \"latitude\": 35.6695,\n                \"longitude\": 139.7651\n            },\n            \"rating\": 4.8,\n            \"descriptions\": \"A historic and luxurious hotel in the heart of Tokyo. It offers elegant rooms, multiple dining options, and a spa. It also features a rooftop garden and a swimming pool.\"\n        },\n        {\n            \"HotelName\": \"Mandarin Oriental Tokyo\",\n            \"Hotel address\": \"2-1-1 Nihonbashi Muromachi, Chuo-ku, Tokyo 103-8285, Japan\",\n            \"Price\": \"₹25,000+\",\n            \"hotel image url\": \"https://images.unsplash.com/photo-1707985770057-4a56edd69666?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwyfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n            \"geo coordinates\": {\n                \"latitude\": 35.6843,\n                \"longitude\": 139.7754\n            },\n            \"rating\": 4.7,\n            \"descriptions\": \"A modern and sophisticated hotel in the Nihonbashi district. It offers stunning city views, elegant rooms, and multiple dining options. It also features a spa and a fitness center.\"\n        },\n        {\n            \"HotelName\": \"Park Hyatt Tokyo\",\n            \"Hotel address\": \"3-7-1-2, Nishi-Shinjuku, Shinjuku-ku, Tokyo 163-0853, Japan\",\n            \"Price\": \"₹20,000+\",\n            \"hotel image url\": \"https://images.unsplash.com/photo-1707985770057-4a56edd69666?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwyfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n            \"geo coordinates\": {\n                \"latitude\": 35.6895,\n                \"longitude\": 139.7036\n            },\n            \"rating\": 4.6,\n            \"descriptions\": \"A stylish and iconic hotel known for its stunning views from its rooftop bar and restaurant. It offers spacious rooms, multiple dining options, and a spa. It also features a fitness center and an outdoor pool.\"\n        },\n        {\n            \"HotelName\": \"The Peninsula Tokyo\",\n            \"Hotel address\": \"1-8-1, Yurakucho, Chiyoda-ku, Tokyo 100-0006, Japan\",\n            \"Price\": \"₹20,000+\",\n            \"hotel image url\": \"https://images.unsplash.com/photo-1700063340685-819a487dcc5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwzfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n            \"geo coordinates\": {\n                \"latitude\": 35.6732,\n                \"longitude\": 139.7653\n            },\n            \"rating\": 4.5,\n            \"descriptions\": \"A luxurious and stylish hotel in the heart of Tokyo. It offers elegant rooms, multiple dining options, and a spa. It also features a fitness center, a swimming pool, and a rooftop garden.\"\n        },\n        {\n            \"HotelName\": \"Four Seasons Hotel Tokyo at Marunouchi\",\n            \"Hotel address\": \"1-9-1 Marunouchi, Chiyoda-ku, Tokyo 100-0005, Japan\",\n            \"Price\": \"₹15,000+\",\n            \"hotel image url\": \"https://images.unsplash.com/photo-1680641403794-9ceb3e5d00fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHw0fHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n            \"geo coordinates\": {\n                \"latitude\": 35.6811,\n                \"longitude\": 139.7664\n            },\n            \"rating\": 4.4,\n            \"descriptions\": \"A sophisticated and modern hotel in the Marunouchi district. It offers spacious rooms, multiple dining options, and a spa. It also features a fitness center and a rooftop terrace.\"\n        }\n    ],\n    \"Itinerary\": [\n        {\n            \"Day\": \"Day 1\",\n            \"Plan\": [\n                {\n                    \"PlaceName\": \"Tokyo Skytree\",\n                    \"Place Details\": \"The tallest structure in Japan, offering panoramic views of the city.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1700063340685-819a487dcc5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwzfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.7101,\n                        \"longitude\": 139.8107\n                    },\n                    \"ticket Pricing\": \"₹3,000\",\n                    \"Time to travel\": \"3-4 hours\"\n                },\n                {\n                    \"PlaceName\": \"Senso-ji Temple\",\n                    \"Place Details\": \"Tokyo's oldest temple, known for its vibrant atmosphere and cultural significance.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1653149108712-f174c6f3c631?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwxfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.7087,\n                        \"longitude\": 139.8003\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"2-3 hours\"\n                },\n                {\n                    \"PlaceName\": \"Nakamise-dori\",\n                    \"Place Details\": \"A bustling shopping street leading to Senso-ji Temple, filled with traditional Japanese souvenirs and snacks.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1677177947814-03e7768d4e9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHw2fHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.7087,\n                        \"longitude\": 139.8003\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"1-2 hours\"\n                }\n            ],\n            \"Best Time to Visit\": \"Morning to evening\"\n        },\n        {\n            \"Day\": \"Day 2\",\n            \"Plan\": [\n                {\n                    \"PlaceName\": \"Shibuya Crossing\",\n                    \"Place Details\": \"The world's busiest pedestrian crossing, a symbol of Tokyo's energy and dynamism.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1653149108712-f174c6f3c631?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwxfHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.6695,\n                        \"longitude\": 139.6988\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"1-2 hours\"\n                },\n                {\n                    \"PlaceName\": \"Harajuku\",\n                    \"Place Details\": \"A vibrant district known for its unique fashion, street food, and youthful energy.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1677177947814-03e7768d4e9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHw2fHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.6709,\n                        \"longitude\": 139.6978\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"3-4 hours\"\n                },\n                {\n                    \"PlaceName\": \"Meiji Jingu Shrine\",\n                    \"Place Details\": \"A serene Shinto shrine dedicated to Emperor Meiji and Empress Shoken, surrounded by lush forest.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1676983463766-db0e54be9da3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwxMHx8dG91cmlzdCUyMHBsYWNlc3xlbnwwfHx8fDE3MjQ0OTc0MTl8MA&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.6732,\n                        \"longitude\": 139.7001\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"2-3 hours\"\n                }\n            ],\n            \"Best Time to Visit\": \"Morning to evening\"\n        },\n        {\n            \"Day\": \"Day 3\",\n            \"Plan\": [\n                {\n                    \"PlaceName\": \"Ghibli Museum\",\n                    \"Place Details\": \"A whimsical museum dedicated to the works of Studio Ghibli, the renowned animation studio.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1677908286999-3975e989c0ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHw5fHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.7009,\n                        \"longitude\": 139.6856\n                    },\n                    \"ticket Pricing\": \"₹3,000\",\n                    \"Time to travel\": \"3-4 hours\"\n                },\n                {\n                    \"PlaceName\": \"Ueno Park\",\n                    \"Place Details\": \"A sprawling park home to museums, temples, a zoo, and a pond.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1676983463766-db0e54be9da3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHwxMHx8dG91cmlzdCUyMHBsYWNlc3xlbnwwfHx8fDE3MjQ0OTc0MTl8MA&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.7128,\n                        \"longitude\": 139.7669\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"3-4 hours\"\n                },\n                {\n                    \"PlaceName\": \"Tsukiji Fish Market\",\n                    \"Place Details\": \"A famous market known for its lively tuna auctions and fresh seafood.\",\n                    \"Place Image Url\": \"https://images.unsplash.com/photo-1680641403794-9ceb3e5d00fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NDY2Nzh8MHwxfHNlYXJjaHw0fHx0b3VyaXN0JTIwcGxhY2VzfGVufDB8fHx8MTcyNDQ5NzQxOXww&ixlib=rb-4.0.3&q=80&w=1080\",\n                    \"Geo Coordinates\": {\n                        \"latitude\": 35.6666,\n                        \"longitude\": 139.7873\n                    },\n                    \"ticket Pricing\": \"Free\",\n                    \"Time to travel\": \"2-3 hours\"\n                }\n            ],\n            \"Best Time to Visit\": \"Morning to afternoon\"\n        }\n    ],\n    \"place\": \"Tokyo, Tokyo, Japan\",\n    \"budget\": \"200000\",\n    \"days\": \"3\",\n    \"people\": \"2\",\n    \"currency\": \"INR\"\n}"},
+          ],
+        },
+        {
+          role: "model",
+          parts: [
+            {text: "{\n    \"questions\": [\n        {\n            \"question\": \"What type of hotel do you prefer?\",\n            \"options\": [\n                \"Luxurious and historic\",\n                \"Modern and sophisticated\",\n                \"Stylish and iconic\",\n                \"Comfortable and affordable\"\n            ]\n        },\n        {\n            \"question\": \"What kind of activities do you enjoy during your travels?\",\n            \"options\": [\n                \"Exploring historical landmarks and cultural sites\",\n                \"Shopping and dining in trendy districts\",\n                \"Visiting museums and art galleries\",\n                \"Relaxing in nature and parks\"\n            ]\n        }\n    ]\n}"},
+          ],
+        },
+      ],
+    });
+
+    const result = await chatSession.sendMessage(prompt);
+    const questions = JSON.parse(result.response.text());
+
+    // Send the response
+    res
+      .status(201)
+      .json({ message: "Trip saved successfully", questions: questions });
+  } catch (error) {
+    console.error("Error generating trip:", error.message);
+    res.status(500).json({ error: "Failed to generate trip plan" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

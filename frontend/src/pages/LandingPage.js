@@ -45,8 +45,6 @@ const floatingAnimation = {
   },
 };
 
-
-
 const LandingPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();

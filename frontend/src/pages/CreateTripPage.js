@@ -105,13 +105,12 @@ const CreateTrip = () => {
           ease: "easeInOut",
         },
         x: {
-          duration: 1.5, // X-axis translation animation duration
+          duration: 0.5, // X-axis translation animation duration
           ease: "easeOut", // Smooth easing for x transition
         },
       },
     },
   };
-
 
   const handleBudgetChange = (e) => {
     const formattedValue = e.target.value.replace(/,/g, "");
@@ -245,25 +244,6 @@ const CreateTrip = () => {
           animate={{ opacity: 1 }} // Fade in and slide in from the left
           transition={{ duration: 0.8, ease: "easeInOut", delay: 1 }} // Delay syncs with blob animation
         >
-          <ButtonGroup mt={8}>
-            <Button
-              size="md"
-              rounded="full"
-              colorScheme="teal"
-              onClick={handleFlightSearch}
-            >
-              Book Flights
-            </Button>
-            <Button
-              size="md"
-              rounded="full"
-              colorScheme="teal"
-              loadingText="Preparing questions..."
-              // isLoading={true}
-            >
-              Create AI Recommend Trip Plan
-            </Button>
-          </ButtonGroup>
           <Box maxW="7xl" mx="auto" p={4}>
             <Divider my={8} />
             {trip.HotelOptions && trip.HotelOptions.length > 0 && (

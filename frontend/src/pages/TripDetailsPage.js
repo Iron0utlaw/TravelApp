@@ -5,7 +5,7 @@ import useFetchTripDetails from "../hooks/useFetchTripDetails";
 import Hotel from "../components/Hotel";
 import ItineraryDay from "../components/ItineraryDay";
 import json2md from "json2md";
-import { DownloadIcon } from "@chakra-ui/icons";
+import { CopyIcon, DownloadIcon } from "@chakra-ui/icons";
 
 const TripDetailsPage = () => {
   const { id } = useParams();
@@ -72,7 +72,7 @@ const TripDetailsPage = () => {
       <Box position="fixed" bottom="20px" right="20px" zIndex="1000">
         <IconButton
           aria-label="Generate Markdown"
-          icon={<DownloadIcon />}
+          icon={<CopyIcon />}
           onClick={generateMarkdown}
           variant="outline"
           color="white"

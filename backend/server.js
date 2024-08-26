@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
   const { place, budget, days, people, currency } = req.body;
 
-  const prompt = `Generate Travel Plan for Location: ${place}, for ${days} Days for ${people} people with a ${budget} ${currency} budget. Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time to travel each of the location for ${days} days with each day plan with best time to visit in JSON format. Do not include any other text in the response.`;
+  const prompt = `Generate Travel Plan for Location: ${place}, for ${days} Days for ${people} people with a ${budget} ${currency} budget. Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time to travel each of the location for ${days} days with each day plan with best time to visit in JSON format. Do not include any other text in the response. Give Raw text. No backticks`;
 
   try {
     const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
@@ -106,7 +106,7 @@ app.post("/api/generate-trip", verifyFirebaseToken, async (req, res) => {
           role: "user",
           parts: [
             {
-              text: "Generate Travel Plan for Location: Delhi, for 3 Days for 2 people with a 10000 INR budget ,Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time to travel each of the location for 3 days with each day plan with best time to visit in JSON format. Do not include any other text in the response.",
+              text: "Generate Travel Plan for Location: Delhi, for 3 Days for 2 people with a 10000 INR budget ,Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time to travel each of the location for 3 days with each day plan with best time to visit in JSON format. Do not include any other text in the response. Give Raw text. No backticks",
             },
           ],
         },

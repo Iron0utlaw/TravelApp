@@ -19,10 +19,13 @@ const generateTrip = async (req, res) => {
 const getTrips = async (req, res) => {
   try {
     const trips = await getUserTrips(req.user.uid);
-    res.status(200).json({ trips });
+    if (trips === null) {
+      return res.status(404).json({ error: "No user found" }); // Send 404 status for no user found
+    }
+    return res.status(200).json({ trips });
   } catch (error) {
     console.error("Error fetching trips:", error.message);
-    res.status(500).json({ error: "Failed to fetch trips" });
+    return res.status(500).json({ error: "Failed to fetch trips" });
   }
 };
 

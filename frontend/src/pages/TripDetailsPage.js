@@ -54,7 +54,7 @@ const TripDetailsPage = () => {
   return (
     <Box maxW="7xl" mx="auto" p={4}>
       <Heading as="h2" size="xl" my={8} color="teal.500" textAlign="center">
-        Trip Details
+        {trip ? `Trip to ${trip.place} Details` : "Trip Details"}
       </Heading>
 
       <ActionButtons

@@ -4,11 +4,8 @@ import TripCard from "../components/TripCard";
 import useFetchTrips from "../hooks/useFetchTrips";
 
 const TripsPage = () => {
-  const { trips, loading, error } = useFetchTrips();
+  const { trips, loading, error, noUser } = useFetchTrips();
   const [showLoading, setShowLoading] = useState(false);
-
-  console.log(trips);
-
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -47,7 +44,7 @@ const TripsPage = () => {
 
       <Divider mb={8} />
 
-      {!loading && trips.length === 0 ? (
+      {!loading && noUser ? (
         <Center py={10}>
           <Text fontSize="xl" color="gray.500">
             No trips found. Create a trip to get started!

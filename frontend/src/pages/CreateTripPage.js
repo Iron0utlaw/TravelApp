@@ -14,7 +14,6 @@ import {
   Card,
   CardBody,
   useBreakpointValue,
-  ButtonGroup,
 } from "@chakra-ui/react";
 import useTripForm from "../hooks/useTripForm";
 import Hotel from "../components/Hotel";
@@ -42,14 +41,6 @@ const CreateTrip = () => {
     fetchLocationSuggestions,
     handleSubmit,
   } = useTripForm();
-
-  const handleFlightSearch = () => {
-    const query = "flights to " + trip.place;
-    window.open(
-      `https://www.google.com/search?q=${encodeURIComponent(query)}`,
-      "_blank"
-    );
-  };
 
   const blob1x = useBreakpointValue({ base: 100, md: 500 });
   const blob2x = useBreakpointValue({ base: -100, md: -500 });

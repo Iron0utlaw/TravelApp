@@ -18,7 +18,7 @@ const ActionButtons = ({
         size="md"
         rounded="full"
       >
-        Create AI Recommend Trip Plan
+        Create AI Recommended Trip Plan
       </AIButton>
     </WrapItem>
     <WrapItem>

@@ -59,8 +59,8 @@ const generateTripPlan = async (tripDetails, userId) => {
 
 const getUserTrips = async (userId) => {
   const user = await User.findOne({ userId }).populate("tripsId");
-  if (!user) throw new Error("No trips found for this user");
-  return user.tripsId;
+  if (!user) return null; // Return null if no user is found
+  return user.tripsId || []; // Return empty array if user has no trips
 };
 
 const getTripDetails = async (tripId) => {

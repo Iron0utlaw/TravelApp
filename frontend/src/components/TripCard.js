@@ -6,6 +6,7 @@ import { formatBudget } from "../CommonUtils";
 const TripCard = ({ trip, id }) => {
   const imageUrl = trip.Itinerary[0].Plan[0]["Place Image Url"];
 
+  console.log(trip);
   
   return (
     <Box

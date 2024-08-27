@@ -7,6 +7,8 @@ const TripsPage = () => {
   const { trips, loading, error } = useFetchTrips();
   const [showLoading, setShowLoading] = useState(false);
 
+  console.log(trips);
+
 
   useEffect(() => {
     const delay = setTimeout(() => {

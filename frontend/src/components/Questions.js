@@ -10,7 +10,6 @@ import {
   ListItem,
   Checkbox,
   Button,
-  Spinner,
   Alert,
   AlertIcon,
   IconButton,
@@ -47,7 +46,7 @@ const Questions = ({ trip, questions }) => {
   const toast = useToast();
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(tripPlan.markdown).then(
+    navigator.clipboard.writeText(tripPlan).then(
       () => {
         toast({
           title: "Copied to clipboard!",
@@ -145,7 +144,7 @@ const Questions = ({ trip, questions }) => {
                 onClick={handleCopy}
               />
             </HStack>
-            <ReactMarkdown>{tripPlan.markdown}</ReactMarkdown>
+            <ReactMarkdown>{tripPlan}</ReactMarkdown>
           </Box>
         )}
       </VStack>

@@ -7,6 +7,8 @@ const useGenerateAITrip = (trip, questionsWithAnswers) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  console.log(tripPlan);
+
   const { user } = useAuth(); // Access the authenticated user
 
   const generateAITrip = async () => {
@@ -18,7 +20,7 @@ const useGenerateAITrip = (trip, questionsWithAnswers) => {
         const idToken = await user.getIdToken(); // Get the ID token
 
         const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/generate-ai-trip`,
+          `${process.env.REACT_APP_API_URL}/api/trips/generate-ai-trip`,
           { trip, questionsWithAnswers },
           {
             headers: {
@@ -27,7 +29,7 @@ const useGenerateAITrip = (trip, questionsWithAnswers) => {
           }
         );
 
-        setTripPlan(response.data); // Assuming the response contains the generated trip plan
+        setTripPlan(response.data.tripPlan); // Assuming the response contains the generated trip plan
       } catch (err) {
         console.error("Error generating AI trip plan:", err);
         setError(err.response?.data?.error || "Failed to generate AI trip plan");

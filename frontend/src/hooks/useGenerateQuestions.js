@@ -18,7 +18,7 @@ const useGenerateQuestions = (trip) => {
         const idToken = await user.getIdToken(); // Get the ID token
 
         const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/generate-questions`,
+          `${process.env.REACT_APP_API_URL}/api/trips/generate-questions`,
           { trip },
           {
             headers: {

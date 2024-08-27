@@ -14,7 +14,7 @@ const useFetchTrips = () => {
       if (user) {
         try {
           const idToken = await user.getIdToken();
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-trips`, {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user/trips`, {
             headers: {
               Authorization: `Bearer ${idToken}`,
             },

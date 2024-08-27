@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Button,
   Flex,
@@ -15,11 +15,13 @@ import {
   DrawerCloseButton,
   useBreakpointValue,
   useDisclosure,
-} from '@chakra-ui/react';
-import { auth, googleProvider } from '../firebase';
-import { useAuth } from '../services/authContext';
-import { signInWithPopup } from 'firebase/auth';
-import { HamburgerIcon } from '@chakra-ui/icons';
+  Avatar,
+  Text,
+} from "@chakra-ui/react";
+import { auth, googleProvider } from "../firebase";
+import { useAuth } from "../services/authContext";
+import { signInWithPopup } from "firebase/auth";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 const NavBar = () => {
   const { user } = useAuth();
@@ -30,18 +32,18 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate('/'); // Redirect to home or any other page after login
+      navigate("/"); // Redirect to home or any other page after login
     } catch (error) {
-      console.error('Error logging in with Google:', error);
+      console.error("Error logging in with Google:", error);
     }
   };
 
@@ -73,12 +75,26 @@ const NavBar = () => {
                       </Link>
                       {user ? (
                         <>
-                          <Link as={RouterLink} to="/create-trip" mb={4} onClick={onClose}>
+                          <Link
+                            as={RouterLink}
+                            to="/create-trip"
+                            mb={4}
+                            onClick={onClose}
+                          >
                             Create Trip
                           </Link>
-                          <Link as={RouterLink} to="/trips" mb={4} onClick={onClose}>
+                          <Link
+                            as={RouterLink}
+                            to="/trips"
+                            mb={4}
+                            onClick={onClose}
+                          >
                             My Trips
                           </Link>
+                          <Flex align="center" mb={4}>
+                            <Avatar size="sm" src={user.photoURL} mr={2} />
+                            <Text>Hi, {user.displayName}</Text>
+                          </Flex>
                           <Button
                             variant="outline"
                             colorScheme="red"
@@ -120,7 +136,15 @@ const NavBar = () => {
                 <Link as={RouterLink} to="/trips" mr={4}>
                   My Trips
                 </Link>
-                <Button variant="outline" colorScheme="red" onClick={handleLogout}>
+                <Flex align="center">
+                  <Avatar size="sm" src={user.photoURL} mr={2} />
+                  <Text mr={2}>Hi, {user.displayName}</Text>
+                </Flex>
+                <Button
+                  variant="outline"
+                  colorScheme="red"
+                  onClick={handleLogout}
+                >
                   Logout
                 </Button>
               </>

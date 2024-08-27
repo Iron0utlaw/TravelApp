@@ -181,10 +181,10 @@ const LandingPage = () => {
         <motion.div {...floatingAnimation}>
           <Box
             {...blobStyles}
-            bottom="-750px" // Added 'px' unit to bottom value
+            bottom="-800px" // Added 'px' unit to bottom value
             left="50%" // Center horizontally with left 50% and transform
             width="2000px" // Cover full width
-            height="1500px" // Adjust the height as needed
+            height="1600px" // Adjust the height as needed
             transform="translateX(-50%)" // Correct syntax for transform
             bgGradient="radial(at 50% 50%, teal.400 0%, teal.200 50%, teal.300 100%)"
             borderRadius="50% 50% 0 0" // Creates curvature at the top

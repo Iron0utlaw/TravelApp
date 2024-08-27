@@ -19,6 +19,7 @@ import {
 import React, { useState } from "react";
 import useGenerateAITrip from "../hooks/useGenerateAITrip"; // Import the custom hook
 import ReactMarkdown from "react-markdown";
+import LoadingScreen from "./Loader";
 
 const Questions = ({ trip, questions }) => {
   const [selectedOptions, setSelectedOptions] = useState(
@@ -104,7 +105,9 @@ const Questions = ({ trip, questions }) => {
           </Box>
         ))}
         {loading ? (
-          <Spinner size="lg" color="teal.500" />
+          <Box alignSelf={"center"}>
+            <LoadingScreen type={"Questions"} />
+          </Box>
         ) : (
           <Button
             colorScheme="teal"

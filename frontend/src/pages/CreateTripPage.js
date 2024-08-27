@@ -232,7 +232,7 @@ const CreateTrip = () => {
                   Error: {error}
                 </Text>
               )}
-              {loading && <LoadingScreen mt={4} />}
+              {loading && <LoadingScreen type="Trip" mt={4} />}
             </CardBody>
           </motion.div>
         </Card>

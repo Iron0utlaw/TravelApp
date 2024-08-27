@@ -22,7 +22,16 @@ const messages = [
   "Almost ready! Just a moment..."
 ];
 
-const LoadingScreen = () => {
+const Qmessages = [
+  "Analyzing your responses to create the perfect trip...",
+  "AI is finding the best hotels that match your preferences...",
+  "Discovering top places that align with your interests...",
+  "Crafting a personalized itinerary just for you...",
+  "Almost there! AI is finalizing your travel plan..."
+];
+
+
+const LoadingScreen = ({type}) => {
   const [currentMessage, setCurrentMessage] = useState(0);
 
   useEffect(() => {
@@ -52,7 +61,7 @@ const LoadingScreen = () => {
           fontSize="lg"
           animation={`${pulse} 2s ease-in-out infinite`}
         >
-          {messages[currentMessage]}
+          {type === "Questions" ? Qmessages[currentMessage] : messages[currentMessage]}
         </Text>
       </VStack>
     </Box>

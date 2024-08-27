@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, Text, VStack, Image, Spinner, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+  Image,
+  Spinner,
+  Flex,
+  Button,
+} from "@chakra-ui/react";
 import Slider from "react-slick";
 import axios from "axios";
 import { formatBudget } from "../CommonUtils";
+import { Link } from "react-router-dom";
 
 const ExploreTrips = () => {
   const [trips, setTrips] = useState([]);
@@ -14,7 +24,9 @@ const ExploreTrips = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/random-trips`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/random-trips`
+        );
         setTrips(response.data.trips);
         setLoading(false);
       } catch (err) {
@@ -25,7 +37,6 @@ const ExploreTrips = () => {
 
     fetchTrips();
   }, []);
-
 
   if (loading) {
     return (
@@ -72,8 +83,9 @@ const ExploreTrips = () => {
     ],
   };
 
+  console.log(trips);
+
   return (
-    
     <Box p={8}>
       <Heading as="h2" size="xl" mb={8} textAlign="center" color="teal.600">
         Explore Trips
@@ -83,7 +95,11 @@ const ExploreTrips = () => {
           <Box key={index} px={4} py={4}>
             <Box p={6} borderRadius="md" shadow="md" bg="gray.100">
               <VStack spacing={4} align="stretch">
-                <Heading as="h3" size={{ base: "sm", md: "md" }} color="teal.500">
+                <Heading
+                  as="h3"
+                  size={{ base: "sm", md: "md" }}
+                  color="teal.500"
+                >
                   {trip.tripData.place}
                 </Heading>
                 <Image
@@ -95,12 +111,21 @@ const ExploreTrips = () => {
                   objectFit="cover"
                 />
                 <Text fontSize="md">
-                  {trip.tripData.days} days for {trip.tripData.people}{" "}
-                  people
+                  {trip.tripData.days} days for {trip.tripData.people} people
                 </Text>
                 <Text fontSize="lg" fontWeight="bold" color="teal.600">
-                  Budget: {trip.tripData.currency} {formatBudget(trip.tripData.budget)}
+                  Budget: {trip.tripData.currency}{" "}
+                  {formatBudget(trip.tripData.budget)}
                 </Text>
+                <Button
+                  as={Link}
+                  to={`/trip/${trip._id}`}
+                  colorScheme="teal"
+                  size="sm"
+                  mt={4}
+                >
+                  Show More
+                </Button>
               </VStack>
             </Box>
           </Box>

@@ -16,40 +16,49 @@ const useTripForm = () => {
   const MAX_DAYS_ALLOWED = 5; // Maximum number of days allowed
 
   const cache = {}; // Cache object to store results
-  const suggestionCache = {}; // Cache for location suggestions
   const toast = useToast();
   const { trip, loading, error, generateTrip } = useGenerateTrip();
 
-  const fetchLocationSuggestions = async (query) => {
-    if (!query) return;
+  const [suggestionCache, setSuggestionCache] = useState({});
 
-    const cacheKey = `suggestions-${query}`;
+const fetchLocationSuggestions = async (query) => {
+  if (!query) return;
 
-    if (suggestionCache[cacheKey]) {
-      setSuggestions(suggestionCache[cacheKey]);
-      return;
-    }
+  const cacheKey = `suggestions-${query}`;
 
-    setLoadingSuggestions(true);
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/locations`, {
-        params: { namePrefix: query },
-      });
+  // Access the suggestionCache using the current state
+  if (suggestionCache[cacheKey]) {
+    setSuggestions(suggestionCache[cacheKey]);
+    console.log("Using cached suggestions");
+    return;
+  }
 
-      const cities = response.data.map((city) => ({
-        id: city._id,
-        name: `${city.city}, ${city.region}, ${city.country}`,
-        country: city.country,
-      }));
+  setLoadingSuggestions(true);
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/locations`, {
+      params: { namePrefix: query },
+    });
 
-      setSuggestions(cities);
-      suggestionCache[cacheKey] = cities; // Cache the results
-    } catch (err) {
-      console.error("Error fetching location suggestions:", err);
-    } finally {
-      setLoadingSuggestions(false);
-    }
-  };
+    const cities = response.data.map((city) => ({
+      id: city._id,
+      name: `${city.city}, ${city.region}, ${city.country}`,
+      country: city.country,
+    }));
+
+    setSuggestions(cities);
+
+    // Correctly update the suggestionCache with the setter function
+    setSuggestionCache((prevCache) => ({
+      ...prevCache,
+      [cacheKey]: cities,
+    }));
+  } catch (err) {
+    console.error("Error fetching location suggestions:", err);
+  } finally {
+    setLoadingSuggestions(false);
+  }
+};
+
 
   const handleSubmit = () => {
     if (!place || !budget || !days || !people) {
